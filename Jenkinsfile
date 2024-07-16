@@ -25,9 +25,12 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}").inside {
-                        sh 'pip install -r requirements.txt'
-                        sh "pytest --junitxml=${WORKSPACE_DIR}/test-results.xml"
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_credentials') {
+                        def image = docker.image("${DOCKER_IMAGE}")
+                        image.inside("-w ${WORKSPACE} -v ${WORKSPACE}:${WORKSPACE} -v ${WORKSPACE_DIR}:${WORKSPACE_DIR}") {
+                            sh 'pip install -r requirements.txt'
+                            sh "pytest --junitxml=${WORKSPACE_DIR}/test-results.xml"
+                        }
                     }
                 }
             }
