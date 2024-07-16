@@ -4,7 +4,7 @@ pipeline {
     environment {
         REPO_URL = 'https://github.com/a3s0h/python_django_testing.git'
         DOCKER_IMAGE = 'python_django_testing_image'
-        DOCKER_CREDENTIALS = 'docker_credentials'  // Make sure this matches your Jenkins credential ID
+        DOCKER_CREDENTIALS = 'docker_credentials'  // Replace with your actual Docker credentials ID
     }
 
     stages {
@@ -24,8 +24,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', "${env.DOCKER_CREDENTIALS}") {
-                        docker.image("${env.DOCKER_IMAGE}").inside {
-                            sh 'pwd'
+                        docker.image("${env.DOCKER_IMAGE}").inside('-v $WORKSPACE:/workspace -w /workspace') {
                             sh 'pytest'
                         }
                     }
