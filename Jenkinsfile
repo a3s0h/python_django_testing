@@ -12,10 +12,20 @@ pipeline {
                 git url: "${env.REPO_URL}", branch: 'main'
             }
         }
+        stage('Prepare Directory') {
+            steps {
+                script {
+                    // Ensure the testProject directory is ready for use
+                    sh 'mkdir -p workspace/testProject'
+                    // Move repository contents to testProject directory
+                    sh 'mv * workspace/testProject/'
+                }
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${env.DOCKER_IMAGE}", ".")
+                    docker.build("${env.DOCKER_IMAGE}", "workspace/testProject")
                 }
             }
         }
