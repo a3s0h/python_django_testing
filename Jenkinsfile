@@ -16,16 +16,16 @@ pipeline {
             steps {
                 script {
                     // Ensure the testProject directory is ready for use
-                    sh 'mkdir -p workspace/testProject'
+                    sh 'mkdir -p workspace/testPipeline'
                     // Move repository contents to testProject directory
-                    sh 'mv * workspace/testProject/'
+                    sh 'mv * workspace/testPipeline/'
                 }
             }
         }
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${env.DOCKER_IMAGE}", "workspace/testProject")
+                    docker.build("${env.DOCKER_IMAGE}", "workspace/testPipeline")
                 }
             }
         }
