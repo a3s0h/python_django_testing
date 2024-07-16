@@ -4,7 +4,7 @@ pipeline {
     environment {
         REPO_URL = 'https://github.com/a3s0h/python_django_testing.git'  
         DOCKER_IMAGE = 'python_django_testing_image' 
-        WORKSPACE_DIR = "${C:\ProgramData\Jenkins\.jenkins\workspace\testPipeline@tmp}" 
+        WORKSPACE_DIR = "${C:\ProgramData\Jenkins\.jenkins\workspace\testPipeline}\@tmp" 
     }
 
     stages {
