@@ -1,39 +1,48 @@
 pipeline {
     agent any
 
+    environment {
+        // Define any environment variables you might need
+        REPO_URL = 'https://github.com/a3s0h/python_django_testing.git'
+        DOCKER_IMAGE = 'python_django_testing_image'
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                // Pull the source code from the repository
-                git 'https://github.com/yourusername/your-repo.git'
+                git branch: 'main', url: "${REPO_URL}"
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                // Build the Docker image
                 script {
-                    docker.build('my-django-app')
+                    docker.build("${DOCKER_IMAGE}")
                 }
             }
         }
 
-        stage('Test') {
+        stage('Run Tests') {
             steps {
-                // Run the tests inside the Docker container
                 script {
-                    docker.image('my-django-app').inside {
-                        sh 'pytest'
+                    docker.image("${DOCKER_IMAGE}").inside {
+                        sh 'pip install -r requirements.txt'
+                        sh 'pytest --junitxml=test-results.xml'
                     }
                 }
+            }
+        }
+
+        stage('Publish Test Results') {
+            steps {
+                junit 'test-results.xml'
             }
         }
     }
 
     post {
         always {
-            // Archive test results and reports
-            junit 'test-results.xml'
+            cleanWs() // Clean workspace after the build
         }
     }
 }
