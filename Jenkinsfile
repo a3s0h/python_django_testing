@@ -2,22 +2,22 @@ pipeline {
     agent any  // Runs on any available agent
 
     environment {
-        REPO_URL = 'https://github.com/a3s0h/python_django_testing.git'  
-        DOCKER_IMAGE = 'python_django_testing_image' 
-        WORKSPACE_DIR = "${C:\ProgramData\Jenkins\.jenkins\workspace\testPipeline}\@tmp" 
+        REPO_URL = 'https://github.com/a3s0h/python_django_testing.git'
+        DOCKER_IMAGE = 'python_django_testing_image'
+        WORKSPACE_DIR = "${WORKSPACE}/@tmp"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: "${REPO_URL}"  
+                git branch: 'main', url: "${REPO_URL}"
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}")  
+                    docker.build("${DOCKER_IMAGE}")
                 }
             }
         }
@@ -26,8 +26,8 @@ pipeline {
             steps {
                 script {
                     docker.image("${DOCKER_IMAGE}").inside {
-                        sh 'pip install -r requirements.txt'  
-                        sh 'pytest --junitxml=${WORKSPACE_DIR}/test-results.xml'  
+                        sh 'pip install -r requirements.txt'
+                        sh "pytest --junitxml=${WORKSPACE_DIR}/test-results.xml"
                     }
                 }
             }
@@ -35,14 +35,14 @@ pipeline {
 
         stage('Publish Test Results') {
             steps {
-                junit '${WORKSPACE_DIR}/test-results.xml'  
+                junit "${WORKSPACE_DIR}/test-results.xml"
             }
         }
     }
 
     post {
         always {
-            cleanWs()  
+            cleanWs()
         }
     }
 }
