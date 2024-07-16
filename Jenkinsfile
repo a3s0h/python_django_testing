@@ -16,9 +16,9 @@ pipeline {
             steps {
                 script {
                     // Ensure the testProject directory is ready for use
-                    sh 'mkdir -p workspace/testPipeline'
+                    bat 'mkdir workspace\\testPipeline'
                     // Move repository contents to testProject directory
-                    sh 'mv * workspace/testPipeline/'
+                    bat 'move * workspace\\testPipeline\\'
                 }
             }
         }
