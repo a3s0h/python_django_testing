@@ -1,48 +1,35 @@
 pipeline {
-    agent any  // Runs on any available agent
-
+    agent any
     environment {
         REPO_URL = 'https://github.com/a3s0h/python_django_testing.git'
         DOCKER_IMAGE = 'python_django_testing_image'
-        WORKSPACE_DIR = "${WORKSPACE}/@tmp"
     }
-
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: "${REPO_URL}"
+                git url: "${REPO_URL}", branch: 'main'
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}")
+                    def dockerImage = docker.build("${DOCKER_IMAGE}", '.')
                 }
             }
         }
-
         stage('Run Tests') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_credentials') {
-                        def image = docker.image("${DOCKER_IMAGE}")
-                        image.inside("-w ${WORKSPACE} -v ${WORKSPACE}:${WORKSPACE} -v ${WORKSPACE_DIR}:${WORKSPACE_DIR}") {
-                            sh 'pip install -r requirements.txt'
-                            sh "pytest --junitxml=${WORKSPACE_DIR}/test-results.xml"
+                    docker.withRegistry('', 'docker-hub-credentials') {
+                        def workDir = "C:/ProgramData/Jenkins/.jenkins/workspace/testPipeline".replace("\\", "/")
+                        docker.image("${DOCKER_IMAGE}").inside("--workdir=${workDir}") {
+                            bat 'python manage.py test'
                         }
                     }
                 }
             }
         }
-
-        stage('Publish Test Results') {
-            steps {
-                junit "${WORKSPACE_DIR}/test-results.xml"
-            }
-        }
     }
-
     post {
         always {
             cleanWs()
