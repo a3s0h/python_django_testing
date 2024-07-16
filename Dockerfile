@@ -10,4 +10,4 @@ EXPOSE 8000
 
 RUN python manage.py migrate
 
-CMD ["python", "manage.py", "test"]
+CMD ["pytest"]
