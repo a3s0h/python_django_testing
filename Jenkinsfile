@@ -20,7 +20,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    docker.withRegistry('', 'docker-credentials') {
+                    docker.withRegistry('', 'docker_credentials') {
                         def workDir = "C:/ProgramData/Jenkins/.jenkins/workspace/testPipeline".replace("\\", "/")
                         docker.image("${DOCKER_IMAGE}").inside("--workdir=${workDir}") {
                             bat 'python manage.py test'
