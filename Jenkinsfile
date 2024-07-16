@@ -15,9 +15,9 @@ pipeline {
         stage('Prepare Directory') {
             steps {
                 script {
-                    // Ensure the testProject directory is ready for use
+                    // Ensure the testPipeline directory is ready for use
                     bat 'mkdir workspace\\testPipeline'
-                    // Move repository contents to testProject directory
+                    // Move repository contents to testPipeline directory
                     bat 'move * workspace\\testPipeline\\'
                 }
             }
