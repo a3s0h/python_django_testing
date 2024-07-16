@@ -24,8 +24,9 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', "${env.DOCKER_CREDENTIALS}") {
-                        docker.image("${env.DOCKER_IMAGE}").inside('-v $WORKSPACE:/workspace -w /workspace') {
-                            sh 'pytest'
+                        docker.image("${env.DOCKER_IMAGE}").inside {
+                            // Ensure the correct paths and environment for Windows
+                            bat 'docker run -v "%cd%":/workspace -w /workspace ${DOCKER_IMAGE} pytest'
                         }
                     }
                 }
